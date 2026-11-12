@@ -1,0 +1,371 @@
+[
+ {
+  "id": "abc_timber-ambient-ash",
+  "name": "Timber Ambient Ash",
+  "brand": "Granitogres",
+  "img": "https://abcemporio-live-826917684567-ap-south-1-an.s3.ap-south-1.amazonaws.com/src/images/products/2023/03/433f412cd85998d71a6ca11cfc265cec_BtU37EW.jpg",
+  "url": "https://www.abcemporio.com/product/timber-ambient-ash",
+  "w": 1.2,
+  "h": 0.6
+ },
+ {
+  "id": "abc_cotto-natural",
+  "name": "Cotto Natural",
+  "brand": "Granitogres",
+  "img": "https://abcemporio-live-826917684567-ap-south-1-an.s3.ap-south-1.amazonaws.com/src/images/products/2023/03/f0feaa7decfa3f4b024714d48569c6d4.jpg",
+  "url": "https://www.abcemporio.com/product/cotto-natural",
+  "w": 1.2,
+  "h": 0.6
+ },
+ {
+  "id": "abc_lamina-cherry",
+  "name": "Lamina Cherry",
+  "brand": "Granitogres",
+  "img": "https://abcemporio-live-826917684567-ap-south-1-an.s3.ap-south-1.amazonaws.com/src/images/products/2023/03/a197fe6d277b77338c95eb3613af20c0.jpg",
+  "url": "https://www.abcemporio.com/product/lamina-cherry",
+  "w": 1.2,
+  "h": 0.2
+ },
+ {
+  "id": "abc_sienna-brown",
+  "name": "Sienna Brown",
+  "brand": "Granitogres",
+  "img": "https://abcemporio-live-826917684567-ap-south-1-an.s3.ap-south-1.amazonaws.com/src/images/products/2023/03/e2aad343918f511673a2684e0213ff28_wZXCmCc.jpg",
+  "url": "https://www.abcemporio.com/product/sienna-brown",
+  "w": 0.6,
+  "h": 0.6
+ },
+ {
+  "id": "abc_seltos-bianco",
+  "name": "Seltos Bianco",
+  "brand": "Granitogres",
+  "img": "https://abcemporio-live-826917684567-ap-south-1-an.s3.ap-south-1.amazonaws.com/src/images/products/2023/03/33299aea2b55498d724be6a360def865_XaIQvp7.jpg",
+  "url": "https://www.abcemporio.com/product/seltos-bianco",
+  "w": 1.2,
+  "h": 0.6
+ },
+ {
+  "id": "abc_amazonite-natural",
+  "name": "Amazonite Natural",
+  "brand": "Granitogres",
+  "img": "https://abcemporio-live-826917684567-ap-south-1-an.s3.ap-south-1.amazonaws.com/src/images/products/2023/03/6a5aafbc887a0ae465425107e132c0a9_0nm05cM.jpg",
+  "url": "https://www.abcemporio.com/product/amazonite-natural",
+  "w": 0.6,
+  "h": 1.2
+ },
+ {
+  "id": "abc_zara-crema",
+  "name": "Zara Crema",
+  "brand": "Granitogres",
+  "img": "https://abcemporio-live-826917684567-ap-south-1-an.s3.ap-south-1.amazonaws.com/src/images/products/2023/03/fe72bcf8938fec3471572477be1d380a_QE1ChtU.jpg",
+  "url": "https://www.abcemporio.com/product/zara-crema",
+  "w": 0.6,
+  "h": 1.2
+ },
+ {
+  "id": "abc_legend-light-grey",
+  "name": "Legend Light Grey",
+  "brand": "Granitogres",
+  "img": "https://abcemporio-live-826917684567-ap-south-1-an.s3.ap-south-1.amazonaws.com/src/images/products/2023/03/fc7287d4698dd24697122c50d7567deb.jpg",
+  "url": "https://www.abcemporio.com/product/legend-light-grey",
+  "w": 1.2,
+  "h": 0.6
+ },
+ {
+  "id": "abc_legend-mushroom",
+  "name": "Legend Mushroom",
+  "brand": "Granitogres",
+  "img": "https://abcemporio-live-826917684567-ap-south-1-an.s3.ap-south-1.amazonaws.com/src/images/products/2023/03/cda4fc443b6c3181c084c1bc150d7dec.jpg",
+  "url": "https://www.abcemporio.com/product/legend-mushroom",
+  "w": 1.2,
+  "h": 0.6
+ },
+ {
+  "id": "abc_zara-graphite",
+  "name": "Zara Graphite",
+  "brand": "Granitogres",
+  "img": "https://abcemporio-live-826917684567-ap-south-1-an.s3.ap-south-1.amazonaws.com/src/images/products/2023/03/596a773c58cce247efa94eb58fb4c0d6_6GqkCb7.jpg",
+  "url": "https://www.abcemporio.com/product/zara-graphite",
+  "w": 0.6,
+  "h": 1.2
+ },
+ {
+  "id": "abc_legend-grey",
+  "name": "Legend Grey",
+  "brand": "Granitogres",
+  "img": "https://abcemporio-live-826917684567-ap-south-1-an.s3.ap-south-1.amazonaws.com/src/images/products/2023/03/a89f1163641e0adb3d6b01e4c7588dbf.jpg",
+  "url": "https://www.abcemporio.com/product/legend-grey",
+  "w": 1.2,
+  "h": 0.6
+ },
+ {
+  "id": "abc_zara-crete",
+  "name": "Zara Crete",
+  "brand": "Granitogres",
+  "img": "https://abcemporio-live-826917684567-ap-south-1-an.s3.ap-south-1.amazonaws.com/src/images/products/2023/03/7f4f3b2d73262ae6b3a9928b8f9067c3_HznNMAv.jpg",
+  "url": "https://www.abcemporio.com/product/zara-crete",
+  "w": 0.6,
+  "h": 1.2
+ },
+ {
+  "id": "abc_seltos-beige",
+  "name": "Seltos Beige",
+  "brand": "Granitogres",
+  "img": "https://abcemporio-live-826917684567-ap-south-1-an.s3.ap-south-1.amazonaws.com/src/images/products/2023/03/38c3b8016d5e3005ee7bd03ffea7eeee_n4q211t.jpg",
+  "url": "https://www.abcemporio.com/product/seltos-beige",
+  "w": 1.2,
+  "h": 0.6
+ },
+ {
+  "id": "abc_moroccan-bianco-glitter",
+  "name": "Moroccan Bianco Glitter",
+  "brand": "Granitogres",
+  "img": "https://abcemporio-live-826917684567-ap-south-1-an.s3.ap-south-1.amazonaws.com/src/images/products/2023/03/5398cd20bee62c3c7ac975eb4ccbaf3d_EnC6TJ9.jpg",
+  "url": "https://www.abcemporio.com/product/moroccan-bianco-glitter",
+  "w": 0.6,
+  "h": 0.6
+ },
+ {
+  "id": "abc_crest-mink",
+  "name": "Crest Mink",
+  "brand": "Granitogres",
+  "img": "https://abcemporio-live-826917684567-ap-south-1-an.s3.ap-south-1.amazonaws.com/src/images/products/2023/03/31ac61eb46479e774404a7cad12c9bb5_DXMvXPo.jpg",
+  "url": "https://www.abcemporio.com/product/crest-mink",
+  "w": 1.2,
+  "h": 0.6
+ },
+ {
+  "id": "abc_sienna-gray",
+  "name": "Sienna Grey",
+  "brand": "Granitogres",
+  "img": "https://abcemporio-live-826917684567-ap-south-1-an.s3.ap-south-1.amazonaws.com/src/images/products/2023/03/d8237a7429ab661985e9e6781db2a373_W30lPPu.jpg",
+  "url": "https://www.abcemporio.com/product/sienna-gray",
+  "w": 0.6,
+  "h": 0.6
+ },
+ {
+  "id": "abc_magic-aventus",
+  "name": "Magic Aventus",
+  "brand": "Granitogres",
+  "img": "https://abcemporio-live-826917684567-ap-south-1-an.s3.ap-south-1.amazonaws.com/src/images/products/2023/03/f44a6be5b2d8c0e71fd256ac14c8aa94_jXTNrNC.jpg",
+  "url": "https://www.abcemporio.com/product/magic-aventus",
+  "w": 0.6,
+  "h": 1.2
+ },
+ {
+  "id": "abc_silk-lova-crema",
+  "name": "Silk Lova Crema",
+  "brand": "Granitogres",
+  "img": "https://abcemporio-live-826917684567-ap-south-1-an.s3.ap-south-1.amazonaws.com/src/images/products/2023/03/4b89ec626b1e0ee603ff2f73fc1d1fe0.jpg",
+  "url": "https://www.abcemporio.com/product/silk-lova-crema",
+  "w": 1.2,
+  "h": 0.6
+ },
+ {
+  "id": "abc_natural-bresccia",
+  "name": "Natural Bresccia",
+  "brand": "Granitogres",
+  "img": "https://abcemporio-live-826917684567-ap-south-1-an.s3.ap-south-1.amazonaws.com/src/images/products/2023/03/5b5f2e609626ad759e29d1c9a595d7b5.jpg",
+  "url": "https://www.abcemporio.com/product/natural-bresccia",
+  "w": 0.8,
+  "h": 1.2
+ },
+ {
+  "id": "abc_antique-beige",
+  "name": "Antique Beige",
+  "brand": "Granitogres",
+  "img": "https://abcemporio-live-826917684567-ap-south-1-an.s3.ap-south-1.amazonaws.com/src/images/products/2023/03/352e69e4ac1853ca8c5054566c63d79f.jpg",
+  "url": "https://www.abcemporio.com/product/antique-beige",
+  "w": 0.8,
+  "h": 1.2
+ },
+ {
+  "id": "abc_monto-carlo-verde",
+  "name": "Monto Carlo Verde",
+  "brand": "Granitogres",
+  "img": "https://abcemporio-live-826917684567-ap-south-1-an.s3.ap-south-1.amazonaws.com/src/images/products/2023/03/4558663122a77d9699f0d5fb6f993c17_Iw7iUPm.jpg",
+  "url": "https://www.abcemporio.com/product/monto-carlo-verde",
+  "w": 0.6,
+  "h": 0.6
+ },
+ {
+  "id": "abc_moroccan-9926-fl",
+  "name": "Moroccan (9926 Fl)",
+  "brand": "Granitogres",
+  "img": "https://abcemporio-live-826917684567-ap-south-1-an.s3.ap-south-1.amazonaws.com/src/images/products/2023/03/10e2c44407118b19d01595c6565b95e7_MXFRvIq.jpg",
+  "url": "https://www.abcemporio.com/product/moroccan-9926-fl",
+  "w": 0.6,
+  "h": 0.6
+ },
+ {
+  "id": "abc_rio-crema",
+  "name": "Rio Crema",
+  "brand": "Granitogres",
+  "img": "https://abcemporio-live-826917684567-ap-south-1-an.s3.ap-south-1.amazonaws.com/src/images/products/2023/03/0cc2388c855a351fab92f66745680cea.jpg",
+  "url": "https://www.abcemporio.com/product/rio-crema",
+  "w": 0.6,
+  "h": 1.2
+ },
+ {
+  "id": "abc_genesis-nero",
+  "name": "Genesis Nero",
+  "brand": "Granitogres",
+  "img": "https://abcemporio-live-826917684567-ap-south-1-an.s3.ap-south-1.amazonaws.com/src/images/products/2023/03/4e5c7d5c8f81113a7890285a2f872c29_lfegkV5.jpg",
+  "url": "https://www.abcemporio.com/product/genesis-nero",
+  "w": 1.2,
+  "h": 0.6
+ },
+ {
+  "id": "abc_diamond-alphine-blue",
+  "name": "Diamond Alphine Blue",
+  "brand": "Granitogres",
+  "img": "https://abcemporio-live-826917684567-ap-south-1-an.s3.ap-south-1.amazonaws.com/src/images/products/2023/03/af83978c032a3c1ad6f5ec42cbb921c6.jpg",
+  "url": "https://www.abcemporio.com/product/diamond-alphine-blue",
+  "w": 1.2,
+  "h": 0.6
+ },
+ {
+  "id": "abc_lasa-bianco",
+  "name": "Lasa Bianco",
+  "brand": "Granitogres",
+  "img": "https://abcemporio-live-826917684567-ap-south-1-an.s3.ap-south-1.amazonaws.com/src/images/products/2023/03/741ff82c82bb5dbb54b90ecfba6845b3_NAIe5FW.png",
+  "url": "https://www.abcemporio.com/product/lasa-bianco",
+  "w": 0.6,
+  "h": 1.2
+ },
+ {
+  "id": "abc_silk-spring-beige",
+  "name": "Silk Spring Beige",
+  "brand": "Granitogres",
+  "img": "https://abcemporio-live-826917684567-ap-south-1-an.s3.ap-south-1.amazonaws.com/src/images/products/2023/03/db05a3d42a5a0cac983618e89157dcd3_LVpdf0Q.jpg",
+  "url": "https://www.abcemporio.com/product/silk-spring-beige",
+  "w": 0.6,
+  "h": 1.2
+ },
+ {
+  "id": "abc_terrazo-beige",
+  "name": "Terrazo Beige",
+  "brand": "Granitogres",
+  "img": "https://abcemporio-live-826917684567-ap-south-1-an.s3.ap-south-1.amazonaws.com/src/images/products/2023/03/650b5836e469fe03d5a6362420bf2e1b_FIpmu72.jpg",
+  "url": "https://www.abcemporio.com/product/terrazo-beige",
+  "w": 0.6,
+  "h": 0.6
+ },
+ {
+  "id": "abc_taco-aqua",
+  "name": "Taco Aqua",
+  "brand": "Granitogres",
+  "img": "https://abcemporio-live-826917684567-ap-south-1-an.s3.ap-south-1.amazonaws.com/src/images/products/2023/03/ee33599ddeba07e3631a7836ff810a34_sLgferN.jpg",
+  "url": "https://www.abcemporio.com/product/taco-aqua",
+  "w": 1.2,
+  "h": 0.6
+ },
+ {
+  "id": "abc_venita-beige",
+  "name": "Venita Beige",
+  "brand": "Granitogres",
+  "img": "https://abcemporio-live-826917684567-ap-south-1-an.s3.ap-south-1.amazonaws.com/src/images/products/2023/03/abc1dd734b9fbcc2ae9a9deb51080ee4.jpg",
+  "url": "https://www.abcemporio.com/product/venita-beige",
+  "w": 0.6,
+  "h": 0.6
+ },
+ {
+  "id": "abc_magic-imperial",
+  "name": "Magic Imperial",
+  "brand": "Granitogres",
+  "img": "https://abcemporio-live-826917684567-ap-south-1-an.s3.ap-south-1.amazonaws.com/src/images/products/2023/03/e2d28b5e225eaf776f8bfd534ee1bc0d.jpg",
+  "url": "https://www.abcemporio.com/product/magic-imperial",
+  "w": 0.6,
+  "h": 1.2
+ },
+ {
+  "id": "abc_jet-black-matt",
+  "name": "Jet Black Matt",
+  "brand": "Granitogres",
+  "img": "https://abcemporio-live-826917684567-ap-south-1-an.s3.ap-south-1.amazonaws.com/src/images/products/2023/03/d8dfa00973fe4dfe541d7ff10b187f9b_Rl1yg8r.jpg",
+  "url": "https://www.abcemporio.com/product/jet-black-matt",
+  "w": 0.6,
+  "h": 0.6
+ },
+ {
+  "id": "abc_jaipur-terra",
+  "name": "Jaipur Terra",
+  "brand": "Granitogres",
+  "img": "https://abcemporio-live-826917684567-ap-south-1-an.s3.ap-south-1.amazonaws.com/src/images/products/2023/03/0f838d78755bdd414b228c923a530001_kddIA4p.jpg",
+  "url": "https://www.abcemporio.com/product/jaipur-terra",
+  "w": 0.6,
+  "h": 0.6
+ },
+ {
+  "id": "abc_genesis-bianco",
+  "name": "Genesis Bianco",
+  "brand": "Granitogres",
+  "img": "https://abcemporio-live-826917684567-ap-south-1-an.s3.ap-south-1.amazonaws.com/src/images/products/2023/03/e067802df0e38284e7936ab39ff387de_7wpk6m7.jpg",
+  "url": "https://www.abcemporio.com/product/genesis-bianco",
+  "w": 1.2,
+  "h": 0.6
+ },
+ {
+  "id": "abc_moroccan-18078-fl",
+  "name": "Moroccan (18078 Fl)",
+  "brand": "Granitogres",
+  "img": "https://abcemporio-live-826917684567-ap-south-1-an.s3.ap-south-1.amazonaws.com/src/images/products/2023/03/01ef18e1f1191ee8ebefcd077220af4e_6cxqi9N.jpg",
+  "url": "https://www.abcemporio.com/product/moroccan-18078-fl",
+  "w": 0.6,
+  "h": 0.6
+ },
+ {
+  "id": "abc_azule-aqua",
+  "name": "Azule Aqua",
+  "brand": "Granitogres",
+  "img": "https://abcemporio-live-826917684567-ap-south-1-an.s3.ap-south-1.amazonaws.com/src/images/products/2023/03/06e84395d364eec60c88ab1ff87ac4bc.jpg",
+  "url": "https://www.abcemporio.com/product/azule-aqua",
+  "w": 0.6,
+  "h": 0.6
+ },
+ {
+  "id": "abc_vint-jade",
+  "name": "Vint Jade",
+  "brand": "Granitogres",
+  "img": "https://abcemporio-live-826917684567-ap-south-1-an.s3.ap-south-1.amazonaws.com/src/images/products/2023/03/714db022ace14d27f016d69999e8d72c_xWgKWmc.jpg",
+  "url": "https://www.abcemporio.com/product/vint-jade",
+  "w": 0.6,
+  "h": 0.6
+ },
+ {
+  "id": "abc_statuario-rome",
+  "name": "Statuario Rome",
+  "brand": "Granitogres",
+  "img": "https://abcemporio-live-826917684567-ap-south-1-an.s3.ap-south-1.amazonaws.com/src/images/products/2023/03/e470e483238d7cc5af62ddb9a3cbf115_6dj6tfW.jpg",
+  "url": "https://www.abcemporio.com/product/statuario-rome",
+  "w": 0.8,
+  "h": 1.2
+ },
+ {
+  "id": "abc_moroccan-pplf-hl1",
+  "name": "Moroccan (Pplf Hl1)",
+  "brand": "Granitogres",
+  "img": "https://abcemporio-live-826917684567-ap-south-1-an.s3.ap-south-1.amazonaws.com/src/images/products/2023/03/23684cfcaec4372e57999192ce2fc785_5NGaSdU.jpg",
+  "url": "https://www.abcemporio.com/product/moroccan-pplf-hl1",
+  "w": 0.6,
+  "h": 0.6
+ },
+ {
+  "id": "abc_ankara-camel",
+  "name": "Ankara Camel",
+  "brand": "Granitogres",
+  "img": "https://abcemporio-live-826917684567-ap-south-1-an.s3.ap-south-1.amazonaws.com/src/images/products/2023/03/b91d8d628c254e82c8b60a4f244f46cf_AWekFXK.jpg",
+  "url": "https://www.abcemporio.com/product/ankara-camel",
+  "w": 1.2,
+  "h": 0.6
+ },
+ {
+  "id": "abc_gravel-white",
+  "name": "Gravel White",
+  "brand": "Granitogres",
+  "img": "https://abcemporio-live-826917684567-ap-south-1-an.s3.ap-south-1.amazonaws.com/src/images/products/2023/03/5e3daabe70be4c900b234584cd02dee6.jpg",
+  "url": "https://www.abcemporio.com/product/gravel-white",
+  "w": 0.6,
+  "h": 1.2
+ }
+]

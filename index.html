@@ -1,0 +1,462 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Room Tile Studio</title>
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;background:#111;font-family:system-ui,sans-serif;color:#fff;overflow:hidden}
+  #view{position:fixed;inset:0}
+  .panel{position:fixed;right:16px;top:16px;bottom:16px;width:330px;background:rgba(18,18,20,.78);backdrop-filter:blur(18px) saturate(1.2);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:18px;overflow:auto;scrollbar-width:thin}
+  h1{font-size:15px;margin:0 0 4px;font-weight:600;letter-spacing:.01em}
+  p{font-size:12px;color:#aaa;margin:0 0 14px}
+.seg{display:grid;grid-template-columns:1fr 1fr;background:rgba(255,255,255,.06);border-radius:12px;padding:3px;margin-bottom:14px}
+  .seg button{background:none;border:0;color:#bbb;font:inherit;font-size:13px;padding:8px;border-radius:9px;cursor:pointer}
+  .seg button[aria-selected=true]{background:#e9b56c;color:#1a1408;font-weight:600}
+  .phead{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px}.phead small{color:#888;font-size:12px}
+  .sel{display:flex;gap:12px;align-items:center;padding:10px;border-radius:14px;background:rgba(255,255,255,.05);margin-bottom:14px}
+  .sel .sw{width:64px;height:64px;border-radius:10px;background-size:200%;background-position:center;flex:none;box-shadow:inset 0 0 0 1px rgba(255,255,255,.1)}
+  .sel b{display:block;font-size:14px;font-weight:600}.sel span{font-size:12px;color:#aaa}
+  .chips{display:flex;gap:6px;overflow-x:auto;margin-bottom:14px;scrollbar-width:none}
+  .chip{flex:none;background:rgba(255,255,255,.06);border:1px solid transparent;color:#ccc;border-radius:999px;padding:6px 12px;font:inherit;font-size:12px;cursor:pointer}
+  .chip[aria-pressed=true]{background:#e9b56c;color:#1a1408;font-weight:600}
+  .tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .tile{position:relative;background:none;border:0;padding:0;color:#bbb;font:inherit;font-size:11px;cursor:pointer;text-align:left;line-height:1.25}
+  .tile .sw{display:block;aspect-ratio:1;border-radius:12px;background-size:220%;background-position:center;background-color:#2a2a2a;margin-bottom:6px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);transition:transform .15s,box-shadow .15s}
+  .tile:hover .sw{transform:translateY(-2px);box-shadow:0 6px 16px rgba(0,0,0,.4),inset 0 0 0 1px rgba(255,255,255,.15)}
+  .tile[aria-pressed=true] .sw{box-shadow:0 0 0 2px #e9b56c,0 6px 16px rgba(0,0,0,.4)}
+  .tile[aria-pressed=true]{color:#fff}
+  .tile[aria-pressed=true]::after{content:"✓";position:absolute;top:6px;right:6px;width:20px;height:20px;border-radius:50%;background:#e9b56c;color:#1a1408;font-size:12px;font-weight:700;display:grid;place-items:center}
+  .tile[hidden]{display:none}
+  .upload .sw{display:grid;place-items:center;background:rgba(255,255,255,.04);box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.25);border-radius:12px;font-size:26px;color:#e9b56c;outline:1.5px dashed transparent}
+  .upload:hover .sw{background:rgba(233,181,108,.12)}
+  #selSize{margin-top:6px;background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:4px 6px;font:inherit;font-size:12px}
+  #selSize[hidden],#selLink[hidden]{display:none}
+  #selLink{font-size:12px;color:#e9b56c;text-decoration:none}
+  .adj{margin-top:18px;padding-top:14px;border-top:1px solid rgba(255,255,255,.08)}
+  .hint{font-size:11px;color:#777;margin:14px 0 0}
+  label{display:block;font-size:12px;color:#ccc;margin:16px 0 6px}
+  input[type=range]{width:100%}
+  #loading{position:fixed;left:16px;bottom:16px;font-size:12px;background:rgba(0,0,0,.6);padding:6px 10px;border-radius:8px}
+  .bar{position:fixed;left:16px;top:16px;display:flex;gap:8px}.panel[hidden]{display:none}
+  .fab{background:rgba(20,20,22,.72);backdrop-filter:blur(14px);color:#fff;border:1px solid rgba(255,255,255,.15);border-radius:999px;padding:10px 16px;font:inherit;font-size:13px;cursor:pointer}
+  .fab[aria-expanded=true]{border-color:#e9b56c}
+  .overlay{position:fixed;left:16px;top:62px;width:260px;background:rgba(20,20,22,.8);backdrop-filter:blur(14px);border-radius:16px;padding:14px 16px 16px}
+  .overlay[hidden]{display:none}
+  .row{display:flex;justify-content:space-between;align-items:center}
+  .row input{width:18px;height:18px;accent-color:#e9b56c}
+  .temp{accent-color:#e9b56c;background:linear-gradient(90deg,#ffb46b,#fff4e5,#cfe0ff);border-radius:999px;height:6px;-webkit-appearance:none;appearance:none}
+  .temp::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:#fff;border:2px solid #222}
+  .presets{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px}
+  .presets button{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:#ddd;border-radius:8px;padding:7px;font:inherit;font-size:12px;cursor:pointer}
+  .num{width:100%;background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:9px 10px;font:inherit;font-size:14px}
+  .num:focus{outline:2px solid #e9b56c;outline-offset:1px}
+  .ohead{display:flex;justify-content:space-between;align-items:center}.ohead button{background:none;border:0;color:#aaa;font-size:16px;cursor:pointer}
+  .overlay label:first-of-type{margin-top:8px}
+  @media (max-width:700px){.panel{top:auto;left:8px;right:8px;bottom:8px;width:auto;padding:10px}.panel h1,.panel p,.panel label:last-of-type,#sun{display:none}
+    .tiles{display:flex;overflow-x:auto;gap:8px}.tile{flex:0 0 76px;font-size:11px}label{margin:8px 0 4px}}
+</style>
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}
+</script>
+</head>
+<body>
+<div id="view"></div>
+<div class="panel" id="tilePanel">
+  <div class="seg" role="tablist"><button data-t="floor" aria-selected="true">Floor</button><button data-t="wall" aria-selected="false">Walls</button></div>
+  <div class="phead"><h1 id="ptitle">Floor tiles</h1><small id="count"></small></div>
+  <div class="sel"><div class="sw" id="selSw"></div><div><b id="selName"></b><span id="selInfo"></span><br><a id="selLink" target="_blank" rel="noopener" hidden>View product ↗</a>
+    <select id="selSize" hidden aria-label="Tile size"><option value="0.3">30 × 30 cm</option><option value="0.6" selected>60 × 60 cm</option><option value="0.8">80 × 80 cm</option><option value="1.2">120 × 120 cm</option></select></div></div>
+  <div class="chips" id="chips"></div>
+  <div class="tiles" id="tiles"></div>
+  <input type="file" id="upFile" accept="image/png,image/jpeg,image/webp" hidden>
+  <div class="adj">
+    <label>Tile size <span id="sv"></span></label>
+    <input type="range" id="scale" min="0.4" max="2.5" step="0.05" value="1">
+  </div>
+  <p class="hint">Drag to look · W A S D to walk · scroll to zoom</p>
+</div>
+<div class="bar"><button id="sizeBtn" class="fab" aria-expanded="false" aria-controls="sizeBox">Room size</button><button id="lightBtn" class="fab" aria-expanded="false" aria-controls="lightBox">Lighting</button><button id="tileBtn" class="fab" aria-expanded="true" aria-controls="tilePanel">Floor tiles</button></div>
+<div id="lightBox" class="overlay" hidden>
+  <div class="ohead"><h1>Lighting</h1><button id="lightClose" aria-label="Close">✕</button></div>
+  <label for="lOn" class="row">Lights on <input type="checkbox" id="lOn" checked></label>
+  <label for="lBright">Brightness <b id="lBrightV"></b></label><input type="range" id="lBright" min="0" max="200" step="1" value="100">
+  <label for="lTemp">Colour <b id="lTempV"></b></label><input type="range" id="lTemp" min="2700" max="6500" step="100" value="4500" class="temp">
+  <div class="presets"><button data-k="2700">Warm</button><button data-k="4000">Neutral</button><button data-k="6500">Cool</button></div>
+</div>
+<div id="sizeBox" class="overlay" hidden>
+  <div class="ohead"><h1>Room size</h1><button id="sizeClose" aria-label="Close">✕</button></div>
+  <label for="rw">Width (m)</label><input class="num" type="number" id="rw" min="1" step="0.1" value="5" inputmode="decimal">
+  <label for="rd">Length (m)</label><input class="num" type="number" id="rd" min="1" step="0.1" value="5" inputmode="decimal">
+  <label for="rh">Height (m)</label><input class="num" type="number" id="rh" min="2" step="0.1" value="2.8" inputmode="decimal">
+  <b id="wv" hidden></b><b id="dv" hidden></b><b id="hv" hidden></b>
+</div>
+<div id="loading">Loading…</div>
+
+<script type="module">
+import * as THREE from 'three';
+import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { RectAreaLightUniformsLib } from 'three/addons/lights/RectAreaLightUniformsLib.js';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { GTAOPass } from 'three/addons/postprocessing/GTAOPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+
+// Real photo-scanned PBR textures (CC0, Poly Haven). size = real metres one texture covers.
+const TEX = 'https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/';
+const TILES = [
+  {id:'painted_plaster_wall', name:'Plaster', size:2},
+  {id:'marble_01', name:'Cream marble', size:2, gloss:true},
+  {id:'marble_tiles', name:'Marble tiles', size:2, gloss:true},
+  {id:'large_floor_tiles_02', name:'Large porcelain', size:2},
+  {id:'floor_tiles_06', name:'Stone tiles', size:2},
+  {id:'floor_tiles_08', name:'Ceramic tiles', size:2},
+  {id:'terrazzo_tiles', name:'Terrazzo', size:2, gloss:true},
+  {id:'checkered_pavement_tiles', name:'Checkered', size:2},
+  {id:'herringbone_parquet', name:'Herringbone oak', size:2},
+  {id:'laminate_floor_02', name:'Laminate', size:2},
+  {id:'wood_floor', name:'Wood planks', size:2},
+  {id:'dark_wooden_planks', name:'Dark planks', size:2},
+];
+
+let W=5, D=5, H=2.8; // room size in metres (user adjustable)
+
+// Renderer
+const view=document.getElementById('view');
+const renderer=new THREE.WebGLRenderer({antialias:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.outputColorSpace=THREE.SRGBColorSpace;
+renderer.toneMapping=THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure=1.0;
+renderer.shadowMap.enabled=true;
+renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+view.appendChild(renderer.domElement);
+
+const scene=new THREE.Scene();
+const camera=new THREE.PerspectiveCamera(60,1,0.05,100);
+// ---------- Walk-through camera ----------
+// Eye height 1.6 m. Drag = look, WASD/arrows or on-screen pad = walk, scroll/pinch/± = zoom.
+camera.position.set(1.4,1.6,1.8);
+let yaw=0.6, pitch=-0.12; // radians
+camera.rotation.order='YXZ';
+const keys={}, pad={f:0,r:0};
+addEventListener('keydown',e=>{keys[e.code]=true;});
+addEventListener('keyup',e=>{keys[e.code]=false;});
+const cv=renderer.domElement; cv.style.touchAction='none';
+const pts=new Map(); let pinch0=0;
+cv.addEventListener('pointerdown',e=>{pts.set(e.pointerId,{x:e.clientX,y:e.clientY});cv.setPointerCapture(e.pointerId);});
+cv.addEventListener('pointermove',e=>{
+  const p=pts.get(e.pointerId);if(!p)return;
+  if(pts.size===2){const [a,b]=[...pts.values()];p.x=e.clientX;p.y=e.clientY;
+    const d=Math.hypot(a.x-b.x,a.y-b.y);if(pinch0)zoom((pinch0-d)*.08);pinch0=d;return;}
+  yaw-=(e.clientX-p.x)*.004; pitch=THREE.MathUtils.clamp(pitch-(e.clientY-p.y)*.004,-1.2,1.2);
+  p.x=e.clientX;p.y=e.clientY;
+});
+const up=e=>{pts.delete(e.pointerId);pinch0=0;};
+cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);
+function zoom(d){camera.fov=THREE.MathUtils.clamp(camera.fov+d,25,90);camera.updateProjectionMatrix();}
+cv.addEventListener('wheel',e=>{e.preventDefault();zoom(e.deltaY*.03);},{passive:false});
+document.querySelectorAll('[data-zoom]').forEach(b=>b.onclick=()=>zoom(+b.dataset.zoom));
+document.querySelectorAll('[data-move]').forEach(b=>{
+  const [k,v]=b.dataset.move.split(':');
+  const on=e=>{e.preventDefault();pad[k]=+v;}, off=()=>{pad[k]=0;};
+  b.addEventListener('pointerdown',on);['pointerup','pointerleave','pointercancel'].forEach(t=>b.addEventListener(t,off));
+});
+const clock=new THREE.Clock();
+function walk(){
+  const dt=Math.min(clock.getDelta(),.05), speed=Math.max(1.6,Math.max(W,D)/8); // m/s, faster in big rooms
+  let f=pad.f+((keys.KeyW||keys.ArrowUp)?1:0)-((keys.KeyS||keys.ArrowDown)?1:0);
+  let r=pad.r+((keys.KeyD||keys.ArrowRight)?1:0)-((keys.KeyA||keys.ArrowLeft)?1:0);
+  const fx=-Math.sin(yaw), fz=-Math.cos(yaw);
+  camera.position.x+=(fx*f+(-fz)*r)*speed*dt;
+  camera.position.z+=(fz*f+fx*r)*speed*dt;
+  const m=.3; // keep away from walls
+  camera.position.x=THREE.MathUtils.clamp(camera.position.x,-W/2+m,W/2-m);
+  camera.position.z=THREE.MathUtils.clamp(camera.position.z,-D/2+m,D/2-m);
+  camera.rotation.set(pitch,yaw,0);
+}
+window.cam=camera;
+
+// Image-based lighting from a real interior HDRI
+new RGBELoader().load('https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/brown_photostudio_02_1k.hdr',t=>{
+  t.mapping=THREE.EquirectangularReflectionMapping;
+  scene.environment=t; applyLight();
+});
+
+const loader=new THREE.TextureLoader();
+const maxAniso=renderer.capabilities.getMaxAnisotropy();
+function tex(url,srgb){const t=loader.load(url);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.anisotropy=maxAniso;if(srgb)t.colorSpace=THREE.SRGBColorSpace;return t;}
+function pbr(id,rep,extra={}){
+  const b=TEX+id+'/'+id;
+  const m=new THREE.MeshStandardMaterial({
+    map:tex(b+'_diff_2k.jpg',true), normalMap:tex(b+'_nor_gl_2k.jpg'),
+    roughnessMap:tex(b+'_rough_2k.jpg'), ...extra});
+  [m.map,m.normalMap,m.roughnessMap].forEach(t=>t.repeat.set(rep[0],rep[1]));
+  return m;
+}
+
+// ---------- Lighting ----------
+const sun=new THREE.DirectionalLight(0xffffff,2.5);
+sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);sun.shadow.bias=-0.0004;sun.shadow.normalBias=.02;
+Object.assign(sun.shadow.camera,{left:-4,right:4,top:4,bottom:-4,near:1,far:20});
+scene.add(sun,sun.target);
+const hemi=new THREE.HemisphereLight(0xffffff,0xf2f2f2,.9);scene.add(hemi);
+const bounce=new THREE.PointLight(0xfff3e6,.6,8,2);bounce.position.set(0,2.4,.5);scene.add(bounce);
+function setSun(v){
+  const a=THREE.MathUtils.lerp(.15,1.2,v); // sun height
+  sun.position.set(THREE.MathUtils.lerp(-4,4,v),2+Math.sin(a)*4,-D/2-5);
+  sun.target.position.set(0,0,.5);
+  
+}
+
+
+// ---------- Room shell (rebuilt whenever the size changes) ----------
+const wallMat=new THREE.MeshStandardMaterial({color:0xffffff,roughness:.9}); // plain white paint
+const frameMat=new THREE.MeshStandardMaterial({color:0xf2f2f0,roughness:.4});
+const ceilMat=new THREE.MeshStandardMaterial({color:0xffffff,roughness:.95});
+const skirt=new THREE.MeshStandardMaterial({color:0xf4f2ee,roughness:.5});
+const glassMat=new THREE.MeshPhysicalMaterial({transmission:1,roughness:.02,thickness:.01,transparent:true,opacity:.15});
+const box=(w,h,d)=>new THREE.BoxGeometry(w,h,d);
+let shell=new THREE.Group();scene.add(shell);
+let walls=[], wallSurface=null; // wall meshes share one material; UVs are in metres
+function wallGeo(w,h){const g=new THREE.PlaneGeometry(w,h),uv=g.attributes.uv;
+  for(let i=0;i<uv.count;i++)uv.setXY(i,uv.getX(i)*w,uv.getY(i)*h);g.setAttribute('uv2',uv);return g;}
+function addMesh(geo,mat,pos,rot=[0,0,0],shadow=true,parent=shell){
+  const m=new THREE.Mesh(geo,mat);m.position.set(...pos);m.rotation.set(...rot);
+  m.receiveShadow=true;m.castShadow=shadow;parent.add(m);return m;
+}
+const floor=new THREE.Mesh(new THREE.PlaneGeometry(1,1),new THREE.MeshStandardMaterial());
+floor.rotation.x=-Math.PI/2;floor.receiveShadow=true;scene.add(floor);
+// outdoor backdrop seen through the window
+const sky=new THREE.Mesh(new THREE.PlaneGeometry(80,30),new THREE.MeshBasicMaterial({color:0xcfe6ff}));scene.add(sky);
+const ground=new THREE.Mesh(new THREE.PlaneGeometry(100,40),new THREE.MeshBasicMaterial({color:0x8fae7a}));
+ground.rotation.x=-Math.PI/2;scene.add(ground);
+RectAreaLightUniformsLib.init();
+const winLight=new THREE.RectAreaLight(0xeef4ff,6,1,1);scene.add(winLight);
+
+function buildRoom(){
+  scene.remove(shell);shell.traverse(o=>o.geometry&&o.geometry.dispose());
+  shell=new THREE.Group();scene.add(shell);
+  floor.geometry.dispose();
+  const fg=new THREE.PlaneGeometry(W,D);fg.setAttribute('uv2',fg.attributes.uv);floor.geometry=fg;
+  addMesh(new THREE.PlaneGeometry(W,D),ceilMat,[0,H,0],[Math.PI/2,0,0],false);
+  const wm=wallSurface||wallMat;
+  walls=[addMesh(wallGeo(D,H),wm,[-W/2,H/2,0],[0,Math.PI/2,0],false),
+    addMesh(wallGeo(D,H),wm,[W/2,H/2,0],[0,-Math.PI/2,0],false),
+    addMesh(wallGeo(W,H),wm,[0,H/2,D/2],[0,Math.PI,0],false)];
+  // back wall (solid)
+  walls.push(addMesh(wallGeo(W,H),wm,[0,H/2,-D/2],[0,0,0],false));
+  // skirting boards
+  addMesh(box(W,.1,.015),skirt,[0,.05,-D/2+.008]);
+  addMesh(box(W,.1,.015),skirt,[0,.05,D/2-.008]);
+  addMesh(box(.015,.1,D),skirt,[-W/2+.008,.05,0]);
+  addMesh(box(.015,.1,D),skirt,[W/2-.008,.05,0]);
+  sky.position.set(0,6,-D/2-15);ground.position.set(0,-.3,-D/2-20);
+  // soft ceiling light panel instead of window daylight
+  winLight.width=W*.5;winLight.height=D*.5;winLight.position.set(0,H-.01,0);winLight.lookAt(0,0,0);
+  const r=Math.max(W,D)/2+1;Object.assign(sun.shadow.camera,{left:-r,right:r,top:r,bottom:-r,far:40});sun.shadow.camera.updateProjectionMatrix();
+  sun.position.z=-D/2-5;
+  bounce.position.set(0,H-.4,.5);bounce.distance=Math.max(W,D,H)*1.6;
+  applyRepeat();
+}
+
+// ---------- Furniture: real photo-scanned 3D models (CC0, Poly Haven) ----------
+const gltfManager=new THREE.LoadingManager();
+// model textures live under /Models/jpg/1k/<name>/ on the CDN
+gltfManager.setURLModifier(u=>u.replace(/Models\/gltf\/1k\/([^/]+)\/textures\//,'Models/jpg/1k/$1/'));
+const gltf=new GLTFLoader(gltfManager);
+const MODELS='https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/';
+function place(name,x,z,rotY=0,{y=0,scale=1}={}){
+  gltf.load(`${MODELS}${name}/${name}_1k.gltf`,g=>{
+    const o=g.scene;o.scale.setScalar(scale);o.rotation.y=rotY;
+    o.traverse(m=>{if(m.isMesh){m.castShadow=m.receiveShadow=true;if(m.material.map)m.material.map.anisotropy=maxAniso;}});
+    const b=new THREE.Box3().setFromObject(o);
+    o.position.set(x,y-b.min.y,z);scene.add(o);(window.models||(window.models={}))[name]=b;
+  });
+}
+// ---------- Tile picker ----------
+// target = which surface the picker is editing: 'floor' or 'wall'
+let target='floor', current=null, scale=1;
+const cur={floor:null,wall:null}, scales={floor:1,wall:1};
+const cache={};
+const setRep=(m,x,y)=>[m.map,m.normalMap,m.roughnessMap,m.aoMap].forEach(t=>t&&t.repeat.set(x,y));
+function applyRepeat(){
+  const f=cur.floor;if(f)setRep(floor.material,W/((f.w||f.size)*scales.floor),D/((f.h||f.size)*scales.floor));
+  const w=cur.wall;if(w&&walls[0])setRep(walls[0].material,1/((w.w||w.size)*scales.wall),1/((w.h||w.size)*scales.wall));
+}
+function matFor(tile,tg){
+  const k=tg+':'+tile.id;if(cache[k])return cache[k];
+  let m;const base=cache[tile.id]; // uploaded tiles keep a base material
+  if(base){m=base.clone();if(base.map){m.map=base.map.clone();m.map.needsUpdate=true;}}
+  else if(tile.abc)m=abcMaterial(tile);
+  else{document.getElementById('loading').style.display='block';
+    m=pbr(tile.id,[1,1],tile.gloss?{envMapIntensity:1.4}:{});if(tile.gloss)m.roughness=.55;}
+  return cache[k]=m;
+}
+function markPressed(){document.querySelectorAll('.tile').forEach(b=>b.setAttribute('aria-pressed',!!current&&b===current.btn));}
+function selectTile(tile,btn){
+  tile.btn=btn;cur[target]=current=tile;markPressed();
+  const m=matFor(tile,target);
+  if(target==='floor')floor.material=m;else{wallSurface=m;walls.forEach(w=>w.material=m);}
+  applyRepeat();
+}
+THREE.DefaultLoadingManager.onLoad=()=>document.getElementById('loading').style.display='none';
+const META={painted_plaster_wall:['Stone','Matte'],marble_01:['Marble','Polished'],marble_tiles:['Marble','Polished'],large_floor_tiles_02:['Ceramic','Matte'],
+  floor_tiles_06:['Stone','Natural'],floor_tiles_08:['Ceramic','Matte'],terrazzo_tiles:['Stone','Polished'],
+  checkered_pavement_tiles:['Ceramic','Matte'],herringbone_parquet:['Wood','Satin'],laminate_floor_02:['Wood','Matte'],
+  wood_floor:['Wood','Satin'],dark_wooden_planks:['Wood','Natural']};
+const swatch=id=>`url(https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/${id}/${id}_diff_1k.jpg)`;
+const list=document.getElementById('tiles'),chips=document.getElementById('chips');
+TILES.forEach((tile,i)=>{
+  tile.cat=META[tile.id][0];tile.finish=META[tile.id][1];
+  const b=document.createElement('button');b.className='tile';b.dataset.cat=tile.cat;
+  b.innerHTML=`<span class="sw" style="background-image:${swatch(tile.id)}"></span>${tile.name}`;
+  b.onclick=()=>{selectTile(tile,b);showSel(tile);};list.appendChild(b);
+  
+  if(tile.id==='marble_01'){selectTile(tile,b);showSel(tile);}
+});
+function showSel(t){document.getElementById('selSw').style.backgroundColor='';const ss=document.getElementById('selSize');document.getElementById('selSw').style.backgroundSize=t.custom?'cover':'';ss.hidden=!t.custom;if(t.custom)ss.value=String(t.size);
+  const link=document.getElementById('selLink');link.hidden=!t.abc;
+  if(t.abc){document.getElementById('selSw').style.backgroundImage=`url(${t.thumb})`;document.getElementById('selSw').style.backgroundSize='cover';
+    document.getElementById('selName').textContent=t.name;
+    document.getElementById('selInfo').textContent=`${t.brand} · ${Math.round(t.w*100)} × ${Math.round(t.h*100)} cm`;link.href=t.url;return;}
+  if(t.custom){document.getElementById('selSw').style.backgroundImage=`url(${t.thumb})`;document.getElementById('selName').textContent=t.name;
+    document.getElementById('selInfo').textContent='Your tile';return;}document.getElementById('selSw').style.backgroundImage=swatch(t.id);
+  document.getElementById('selName').textContent=t.name;
+  document.getElementById('selInfo').textContent=`${t.cat} · ${t.finish} finish`;}
+function filter(cat){let n=0;list.querySelectorAll('.tile').forEach(b=>{if(b.classList.contains('upload')){b.hidden=false;return;}const show=cat==='All'||b.dataset.cat===cat;b.hidden=!show;n+=show;});
+  chips.querySelectorAll('.chip').forEach(c=>c.setAttribute('aria-pressed',c.textContent===cat));
+  document.getElementById('count').textContent=n+' options';}
+['All','ABC Emporio','My tiles','Marble','Stone','Ceramic','Wood'].forEach(c=>{const b=document.createElement('button');b.className='chip';b.textContent=c;b.onclick=()=>filter(c);chips.appendChild(b);});
+filter('All');
+
+// ---------- Upload your own tile ----------
+// The photo stays in the browser; it is drawn onto a canvas with grout lines and used as the floor texture.
+const upInput=document.getElementById('upFile');
+const upBtn=document.createElement('button');upBtn.className='tile upload';upBtn.dataset.cat='My tiles';
+upBtn.innerHTML='<span class="sw">+</span>Upload tile';upBtn.onclick=()=>upInput.click();
+list.prepend(upBtn);
+upInput.onchange=()=>{
+  const f=upInput.files[0];upInput.value='';if(!f)return;
+  if(!/^image\/(png|jpeg|webp)$/.test(f.type)||f.size>15e6){alert('Please choose a PNG, JPG or WebP image under 15 MB.');return;}
+  const url=URL.createObjectURL(f),img=new Image();
+  img.onload=()=>{
+    const N=1024,c=document.createElement('canvas');c.width=c.height=N;const g=c.getContext('2d');
+    const k=Math.max(N/img.width,N/img.height);g.drawImage(img,(N-img.width*k)/2,(N-img.height*k)/2,img.width*k,img.height*k);
+    g.strokeStyle='#d9d3c9';g.lineWidth=6;g.strokeRect(0,0,N,N); // grout
+    URL.revokeObjectURL(url);
+    const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;t.wrapS=t.wrapT=THREE.RepeatWrapping;t.anisotropy=maxAniso;
+    const id='custom_'+Date.now();
+    const tile={id,name:f.name.replace(/\.[^.]+$/,'').slice(0,24)||'My tile',size:.6,custom:true,cat:'My tiles',thumb:c.toDataURL('image/jpeg',.7)};
+    cache[id]=new THREE.MeshStandardMaterial({map:t,roughness:.45,envMapIntensity:1.2});
+    TILES.push(tile);
+    const b=document.createElement('button');b.className='tile';b.dataset.cat='My tiles';
+    const sw=document.createElement('span');sw.className='sw';sw.style.backgroundImage=`url(${tile.thumb})`;sw.style.backgroundSize='cover';
+    b.append(sw,tile.name);b.onclick=()=>{selectTile(tile,b);showSel(tile);};
+    upBtn.after(b);filter('All');b.click();
+  };
+  img.onerror=()=>{URL.revokeObjectURL(url);alert('That image could not be read.');};
+  img.src=url;
+};
+// ---------- ABC Emporio catalogue tiles (abc-tiles.json, built by fetch_abc_tiles.py) ----------
+const abcThumb=u=>'https://www.abcemporio.com/_next/image?url='+encodeURIComponent(u)+'&w=256&q=70';
+function abcMaterial(tile){
+  const m=new THREE.MeshStandardMaterial({color:0x888888,roughness:.4,envMapIntensity:1.2});
+  const img=new Image();img.crossOrigin='anonymous';
+  document.getElementById('loading').style.display='block';
+  img.onload=()=>{
+    const Wd=1024,Hd=Math.round(1024*tile.h/tile.w),c=document.createElement('canvas');c.width=Wd;c.height=Hd;
+    const g=c.getContext('2d');g.drawImage(img,0,0,Wd,Hd);g.strokeStyle='#cfc8bd';g.lineWidth=4;g.strokeRect(0,0,Wd,Hd); // grout
+    const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;t.wrapS=t.wrapT=THREE.RepeatWrapping;t.anisotropy=maxAniso;
+    m.map=t;m.color.set(0xffffff);m.needsUpdate=true;applyRepeat();
+    document.getElementById('loading').style.display='none';
+  };
+  img.onerror=()=>{document.getElementById('loading').style.display='none';};
+  img.src=tile.img;return m;
+}
+fetch('abc-tiles.json').then(r=>r.json()).then(items=>{
+  let anchor=upBtn;
+  items.forEach(x=>{
+    const tile={...x,abc:true,cat:'ABC Emporio',thumb:abcThumb(x.img)};
+    TILES.push(tile);
+    const b=document.createElement('button');b.className='tile';b.dataset.cat='ABC Emporio';
+    const sw=document.createElement('span');sw.className='sw';sw.style.backgroundImage=`url(${tile.thumb})`;sw.style.backgroundSize='cover';
+    b.append(sw,tile.name);
+    b.onclick=()=>{selectTile(tile,b);showSel(tile);};
+    anchor.after(b);anchor=b;
+  });
+  filter('All');
+}).catch(()=>{});
+document.querySelectorAll('.seg button').forEach(b=>b.onclick=()=>{
+  target=b.dataset.t;document.querySelectorAll('.seg button').forEach(x=>x.setAttribute('aria-selected',x===b));
+  document.getElementById('ptitle').textContent=target==='floor'?'Floor tiles':'Wall tiles';
+  current=cur[target];markPressed();if(current)showSel(current);
+  else{const sw=document.getElementById('selSw');sw.style.backgroundImage='none';sw.style.backgroundColor='#fff';
+    document.getElementById('selName').textContent='White paint';document.getElementById('selInfo').textContent='Pick a tile to cover the walls';
+    document.getElementById('selSize').hidden=true;document.getElementById('selLink').hidden=true;}
+  sc.value=scales[target];sv.textContent=(+sc.value).toFixed(2)+'×';
+});
+document.getElementById('selSize').onchange=e=>{if(current&&current.custom){current.size=+e.target.value;applyRepeat();}};
+const sc=document.getElementById('scale'),sv=document.getElementById('sv');
+sc.oninput=()=>{scale=scales[target]=+sc.value;sv.textContent=scale.toFixed(2)+'×';applyRepeat();};sc.oninput();
+
+// ---------- Room size controls ----------
+const rw=document.getElementById('rw'),rd=document.getElementById('rd'),rh=document.getElementById('rh');
+function onSize(){
+  const v=(el,min)=>{const n=parseFloat(el.value);return isFinite(n)?Math.max(min,n):null;};
+  const w=v(rw,1),d=v(rd,1),h=v(rh,2);if(w===null||d===null||h===null)return; // ignore half-typed values
+  W=w;D=d;H=h;
+  camera.far=Math.max(100,Math.max(W,D,H)*4);camera.updateProjectionMatrix();
+  document.getElementById('wv').textContent=W.toFixed(1)+' m';
+  document.getElementById('dv').textContent=D.toFixed(1)+' m';
+  document.getElementById('hv').textContent=H.toFixed(2)+' m';
+  buildRoom();}
+[rw,rd,rh].forEach(i=>{i.oninput=onSize;i.onkeydown=e=>e.stopPropagation();});onSize();setSun(.5);
+
+const sizeBtn=document.getElementById('sizeBtn'),sizeBox=document.getElementById('sizeBox');
+function toggleSize(open){sizeBox.hidden=!open;sizeBtn.setAttribute('aria-expanded',open);}
+sizeBtn.onclick=()=>toggleSize(sizeBox.hidden);
+document.getElementById('sizeClose').onclick=()=>toggleSize(false);
+
+// ---------- Lighting controls ----------
+// colour temperature (Kelvin) -> RGB, Tanner Helland approximation
+function kelvin(k){k/=100;let r,g,b;
+  if(k<=66){r=255;g=99.47*Math.log(k)-161.12;b=k<=19?0:138.52*Math.log(k-10)-305.04;}
+  else{r=329.7*Math.pow(k-60,-.1332);g=288.12*Math.pow(k-60,-.0755);b=255;}
+  const c=v=>Math.min(255,Math.max(0,v))/255;return new THREE.Color(c(r),c(g),c(b));}
+const lOn=document.getElementById('lOn'),lBright=document.getElementById('lBright'),lTemp=document.getElementById('lTemp');
+function applyLight(){
+  const f=lOn.checked?(+lBright.value)/100:0, col=kelvin(+lTemp.value);
+  winLight.intensity=4*f;bounce.intensity=.6*f;           // ceiling lights
+  sun.intensity=2.5*f;hemi.intensity=.05+.8*f;            // a little ambient stays when off
+  scene.environmentIntensity=.03+.42*f;renderer.toneMappingExposure=.35+.65*Math.min(f,1)+.25*Math.max(0,f-1);
+  [winLight,bounce,sun].forEach(l=>l.color.copy(col));hemi.color.copy(col);
+  document.getElementById('lBrightV').textContent=lBright.value+'%';
+  const k=+lTemp.value;document.getElementById('lTempV').textContent=k+' K '+(k<3500?'(warm)':k>5200?'(cool)':'(neutral)');
+}
+[lOn,lBright,lTemp].forEach(i=>i.oninput=applyLight);
+document.querySelectorAll('.presets button').forEach(b=>b.onclick=()=>{lTemp.value=b.dataset.k;applyLight();});
+applyLight();
+const lightBtn=document.getElementById('lightBtn'),lightBox=document.getElementById('lightBox');
+function toggleLight(open){lightBox.hidden=!open;lightBtn.setAttribute('aria-expanded',open);if(open)toggleSize(false);}
+lightBtn.onclick=()=>toggleLight(lightBox.hidden);
+document.getElementById('lightClose').onclick=()=>toggleLight(false);
+sizeBtn.addEventListener('click',()=>{if(!sizeBox.hidden)toggleLight(false);});
+const tileBtn=document.getElementById('tileBtn'),tilePanel=document.getElementById('tilePanel');
+tileBtn.onclick=()=>{const open=tilePanel.hidden;tilePanel.hidden=!open;tileBtn.setAttribute('aria-expanded',open);};
+
+// ---------- Loop ----------
+// ambient occlusion: soft contact shadows in corners and under furniture
+const composer=new EffectComposer(renderer);
+composer.addPass(new RenderPass(scene,camera));
+const ao=new GTAOPass(scene,camera,innerWidth,innerHeight);
+ao.updateGtaoMaterial({radius:.25,distanceExponent:1,thickness:1,scale:.6});
+composer.addPass(ao);composer.addPass(new OutputPass());
+function resize(){const w=innerWidth,h=innerHeight;renderer.setSize(w,h);composer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix();}
+addEventListener('resize',resize);resize();
+renderer.setAnimationLoop(()=>{walk();composer.render();});
+</script>
+</body>
+</html>
