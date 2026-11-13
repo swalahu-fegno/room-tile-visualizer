@@ -44,6 +44,12 @@
   .fab[aria-expanded=true]{border-color:#e9b56c}
   .overlay{position:fixed;left:16px;top:62px;width:260px;background:rgba(20,20,22,.8);backdrop-filter:blur(14px);border-radius:16px;padding:14px 16px 16px}
   .overlay[hidden]{display:none}
+  .rtype{display:flex;background:rgba(20,20,22,.72);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.15);border-radius:999px;padding:3px}
+  .rtype button{background:none;border:0;color:#ccc;font:inherit;font-size:13px;padding:7px 14px;border-radius:999px;cursor:pointer}
+  .rtype button[aria-pressed=true]{background:#e9b56c;color:#1a1408;font-weight:600}
+  .note{font-size:12px;color:#e9b56c;margin:8px 0 0}.note[hidden]{display:none}
+  .num:disabled{opacity:.45}
+  .bar{flex-wrap:wrap}
   .row{display:flex;justify-content:space-between;align-items:center}
   .row input{width:18px;height:18px;accent-color:#e9b56c}
   .temp{accent-color:#e9b56c;background:linear-gradient(90deg,#ffb46b,#fff4e5,#cfe0ff);border-radius:999px;height:6px;-webkit-appearance:none;appearance:none}
@@ -77,7 +83,7 @@
   </div>
   <p class="hint">Drag to look · W A S D to walk · scroll to zoom</p>
 </div>
-<div class="bar"><button id="sizeBtn" class="fab" aria-expanded="false" aria-controls="sizeBox">Room size</button><button id="lightBtn" class="fab" aria-expanded="false" aria-controls="lightBox">Lighting</button><button id="tileBtn" class="fab" aria-expanded="true" aria-controls="tilePanel">Floor tiles</button></div>
+<div class="bar"><div class="rtype" role="group" aria-label="Room type"><button data-room="free" aria-pressed="true">Free room</button><button data-room="kitchen" aria-pressed="false">Kitchen</button></div><button id="sizeBtn" class="fab" aria-expanded="false" aria-controls="sizeBox">Room size</button><button id="lightBtn" class="fab" aria-expanded="false" aria-controls="lightBox">Lighting</button><button id="tileBtn" class="fab" aria-expanded="true" aria-controls="tilePanel">Floor tiles</button></div>
 <div id="lightBox" class="overlay" hidden>
   <div class="ohead"><h1>Lighting</h1><button id="lightClose" aria-label="Close">✕</button></div>
   <label for="lOn" class="row">Lights on <input type="checkbox" id="lOn" checked></label>
@@ -87,6 +93,7 @@
 </div>
 <div id="sizeBox" class="overlay" hidden>
   <div class="ohead"><h1>Room size</h1><button id="sizeClose" aria-label="Close">✕</button></div>
+  <p id="sizeNote" class="note" hidden>The kitchen has a fixed size. Switch to Free room to change it.</p>
   <label for="rw">Width (m)</label><input class="num" type="number" id="rw" min="1" step="0.1" value="5" inputmode="decimal">
   <label for="rd">Length (m)</label><input class="num" type="number" id="rd" min="1" step="0.1" value="5" inputmode="decimal">
   <label for="rh">Height (m)</label><input class="num" type="number" id="rh" min="2" step="0.1" value="2.8" inputmode="decimal">
@@ -446,6 +453,116 @@ document.getElementById('lightClose').onclick=()=>toggleLight(false);
 sizeBtn.addEventListener('click',()=>{if(!sizeBox.hidden)toggleLight(false);});
 const tileBtn=document.getElementById('tileBtn'),tilePanel=document.getElementById('tilePanel');
 tileBtn.onclick=()=>{const open=tilePanel.hidden;tilePanel.hidden=!open;tileBtn.setAttribute('aria-expanded',open);};
+
+// ---------- Kitchen preset (fixed layout, modelled on a modern handleless kitchen) ----------
+function marbleTexture(){ // white marble with soft grey veins, drawn once
+  const N=1024,c=document.createElement('canvas');c.width=c.height=N;const g=c.getContext('2d');
+  g.fillStyle='#f4f4f2';g.fillRect(0,0,N,N);
+  for(let pass=0;pass<2;pass++){
+    g.filter=pass?'blur(1px)':'blur(6px)';
+    for(let i=0;i<(pass?14:7);i++){
+      g.strokeStyle=pass?'rgba(110,110,115,.55)':'rgba(150,150,155,.35)';g.lineWidth=pass?1.4+Math.random()*1.5:10+Math.random()*16;
+      g.beginPath();let x=Math.random()*N,y=-20;g.moveTo(x,y);
+      while(y<N+20){x+=(Math.random()-.45)*40;y+=18+Math.random()*20;g.lineTo(x,y);}g.stroke();
+    }
+  }
+  g.filter='none';
+  const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;t.wrapS=t.wrapT=THREE.RepeatWrapping;t.anisotropy=maxAniso;return t;
+}
+function leafTexture(){ // dense green wall
+  const N=512,c=document.createElement('canvas');c.width=c.height=N;const g=c.getContext('2d');
+  g.fillStyle='#16301a';g.fillRect(0,0,N,N);
+  for(let i=0;i<900;i++){const x=Math.random()*N,y=Math.random()*N,r=8+Math.random()*16,a=Math.random()*Math.PI;
+    g.fillStyle=`hsl(${95+Math.random()*40},${35+Math.random()*30}%,${18+Math.random()*30}%)`;
+    g.beginPath();g.ellipse(x,y,r,r*.45,a,0,7);g.fill();}
+  const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;t.wrapS=t.wrapT=THREE.RepeatWrapping;return t;
+}
+let kitchen=null;
+const KITCHEN_SIZE={w:6,d:5,h:3};
+function buildKitchen(){
+  const k=new THREE.Group();
+  const mt=marbleTexture();
+  const marble=new THREE.MeshPhysicalMaterial({map:mt,roughness:.18,clearcoat:.6,clearcoatRoughness:.15});
+  const cab=new THREE.MeshStandardMaterial({color:0xaeb2b7,roughness:.4,metalness:.05});
+  const carcass=new THREE.MeshStandardMaterial({color:0x9a9ea3,roughness:.6});
+  const steel=new THREE.MeshStandardMaterial({color:0xc8ccd1,metalness:.95,roughness:.22});
+  const dark=new THREE.MeshStandardMaterial({color:0x1d1f22,roughness:.35,metalness:.3});
+  const chrome=new THREE.MeshStandardMaterial({color:0xf2f2f2,metalness:1,roughness:.08});
+  const add=(geo,mat,x,y,z,shadow=true)=>{const m=new THREE.Mesh(geo,mat);m.position.set(x,y,z);m.castShadow=shadow;m.receiveShadow=true;k.add(m);return m;};
+  const B=(w,h,d)=>new THREE.BoxGeometry(w,h,d);
+  const back=-KITCHEN_SIZE.d/2;
+  // run of cabinets along the back wall
+  const x0=-1.0,x1=2.2,runW=x1-x0,cx=(x0+x1)/2,dep=.6;
+  add(B(runW,.1,dep-.06),dark,cx,.05,back+dep/2-.03);                         // toe kick
+  add(B(runW,.76,dep),carcass,cx,.48,back+dep/2);                              // base carcass
+  const gap=.006,fz=back+dep+.01;
+  const fronts=[[x0,.6,'drawers'],[x0+.6,.65],[x0+1.25,.65],[x0+1.9,.65],[x0+2.55,.65]];
+  fronts.forEach(([fx,fw,type])=>{
+    if(type==='drawers')[0,1,2,3].forEach(i=>add(B(fw-gap*2,.19-gap*2,.02),cab,fx+fw/2,.1+.095+i*.19,fz));
+    else add(B(fw-gap*2,.76-gap*2,.02),cab,fx+fw/2,.48,fz);
+  });
+  add(B(runW+.02,.04,dep+.03),marble,cx,.88,back+(dep+.03)/2);                 // worktop
+  // marble backsplash up to the wall units
+  const bs=add(new THREE.PlaneGeometry(runW,.62),marble,cx,1.21,back+.002,false);
+  // wall units: two rows of wide flat panels
+  const uy0=1.52,uy1=2.52,udep=.36;
+  add(B(runW,uy1-uy0,udep),carcass,cx,(uy0+uy1)/2,back+udep/2);
+  [[uy0,.5],[uy0+.5,.5]].forEach(([y,h])=>[0,1,2].forEach(i=>{const w=runW/3;
+    add(B(w-gap*2,h-gap*2,.02),cab,x0+w*i+w/2,y+h/2,back+udep+.01);}));
+  // LED strip under wall units + its light
+  add(B(runW-.1,.012,.02),new THREE.MeshStandardMaterial({color:0xffffff,emissive:0xffd7a0,emissiveIntensity:3}),cx,uy0-.008,back+udep-.05,false);
+  const led=new THREE.RectAreaLight(0xffd9a8,14,runW-.1,.08);led.position.set(cx,uy0-.02,back+udep-.06);led.lookAt(cx,0,back+udep-.06);k.add(led);
+  // sink + faucet
+  add(B(.7,.012,.42),dark,x0+2.0,.902,back+.33,false);
+  const spout=new THREE.TubeGeometry(new THREE.CatmullRomCurve3([new THREE.Vector3(0,0,0),new THREE.Vector3(0,.32,0),new THREE.Vector3(0,.38,.08),new THREE.Vector3(0,.3,.18)]),24,.012,10);
+  add(spout,chrome,x0+2.0,.9,back+.08);
+  add(new THREE.CylinderGeometry(.025,.025,.04,16),chrome,x0+2.0,.92,back+.08);
+  // coffee machine
+  add(B(.32,.36,.34),steel,x0+.9,1.08,back+.25);
+  add(B(.24,.12,.02),dark,x0+.9,1.16,back+.43,false);
+  add(new THREE.CylinderGeometry(.04,.04,.08,16),dark,x0+.86,.94,back+.38);
+  // fruit bowl
+  add(new THREE.SphereGeometry(.14,24,12,0,Math.PI*2,Math.PI/2,Math.PI/2),new THREE.MeshStandardMaterial({color:0xe8e4dc,roughness:.4,side:THREE.DoubleSide}),x0+2.75,1.04,back+.3).rotation.x=Math.PI;
+  [[0xc0392b,-.05,.0],[0xe67e22,.05,.03],[0x27ae60,0,-.05],[0xc0392b,.06,-.04]].forEach(([c,dx,dz])=>add(new THREE.SphereGeometry(.045,16,12),new THREE.MeshStandardMaterial({color:c,roughness:.5}),x0+2.75+dx,.96,back+.3+dz));
+  // fridge (French door, stainless) to the left of the run
+  const fx=x0-.5,fd=.72;
+  add(B(.92,1.82,fd),steel,fx,.91,back+fd/2);
+  add(B(.004,1.78,.01),dark,fx,.91,back+fd+.003,false);                       // door split
+  [-.03,.03].forEach(s=>add(new THREE.CylinderGeometry(.012,.012,1.0,12),chrome,fx+s,1.05,back+fd+.05));
+  add(B(.2,.32,.01),dark,fx-.24,1.2,back+fd+.003,false);                      // water dispenser
+  // marble island (right, front)
+  add(B(.9,.92,1.9),marble,2.1,.46,.3);
+  // green wall with warm LED frame on the left wall
+  const gw=new THREE.Mesh(new THREE.PlaneGeometry(1.6,2.4),new THREE.MeshStandardMaterial({map:leafTexture(),roughness:1}));
+  gw.position.set(-KITCHEN_SIZE.w/2+.02,1.25,-.6);gw.rotation.y=Math.PI/2;gw.receiveShadow=true;k.add(gw);
+  const glow=new THREE.MeshStandardMaterial({color:0xffffff,emissive:0xffb35c,emissiveIntensity:2.5});
+  [[0,2.46,1.66,.03],[0,.04,1.66,.03]].forEach(([z,y,l,t])=>{const m=add(B(t,t,l),glow,-KITCHEN_SIZE.w/2+.03,y,-.6,false);});
+  [-1.4,.2].forEach(z=>add(B(.03,2.44,.03),glow,-KITCHEN_SIZE.w/2+.03,1.25,z,false));
+  const gl=new THREE.RectAreaLight(0xffb35c,3,1.6,2.4);gl.position.set(-KITCHEN_SIZE.w/2+.05,1.25,-.6);gl.lookAt(0,1.25,-.6);k.add(gl);
+  scene.add(k);
+  // real plants: hanging one on the wall units, potted one on the island
+  gltf.load(`${MODELS}potted_plant_02/potted_plant_02_1k.gltf`,g=>{const o=g.scene;o.scale.setScalar(.75);
+    o.traverse(m=>{if(m.isMesh)m.castShadow=m.receiveShadow=true;});const b=new THREE.Box3().setFromObject(o);
+    o.position.set(x1-.35,uy1-b.min.y,back+.2);k.add(o);});
+  gltf.load(`${MODELS}potted_plant_04/potted_plant_04_1k.gltf`,g=>{const o=g.scene;o.scale.setScalar(1.4);
+    o.traverse(m=>{if(m.isMesh)m.castShadow=m.receiveShadow=true;});const b=new THREE.Box3().setFromObject(o);
+    o.position.set(2.1,.92-b.min.y,-.35);k.add(o);});
+  return k;
+}
+let roomType='free';
+function setRoomType(t){
+  roomType=t;
+  document.querySelectorAll('.rtype button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.room===t));
+  const locked=t==='kitchen';
+  [rw,rd,rh].forEach(i=>i.disabled=locked);
+  document.getElementById('sizeNote').hidden=!locked;
+  if(locked){
+    rw.value=KITCHEN_SIZE.w;rd.value=KITCHEN_SIZE.d;rh.value=KITCHEN_SIZE.h;onSize();
+    if(!kitchen)kitchen=buildKitchen();else scene.add(kitchen);
+    camera.position.set(.3,1.6,2.1);yaw=.08;pitch=-.12;
+  }else if(kitchen){scene.remove(kitchen);}
+}
+document.querySelectorAll('.rtype button').forEach(b=>b.onclick=()=>setRoomType(b.dataset.room));
 
 // ---------- Loop ----------
 // ambient occlusion: soft contact shadows in corners and under furniture
